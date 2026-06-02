@@ -233,7 +233,7 @@ class EnvironmentExporterUI(QDialog):
 
     def __init__(self, parent: QWidget | None = None):
         super().__init__(parent)
-        self.setWindowTitle("ENV EXPORTER")
+        self.setWindowTitle("Enviroment Exporter")
         self.setMinimumWidth(500)
         self.setStyleSheet(STYLE)
         self.setWindowFlags(
@@ -286,7 +286,7 @@ class EnvironmentExporterUI(QDialog):
         # ── Export folder ──
         root.addLayout(
             self._field_row(
-                "EXPORT FOLDER",
+                "USD EXPORT FOLDER",
                 "le_export",
                 placeholder="C:/Exports/MyEnvironment",
                 browse_slot=self._browse_export,
@@ -315,19 +315,31 @@ class EnvironmentExporterUI(QDialog):
                 browse_slot=self._browse_project,
             )
         )
+        root.addSpacing(12)
+
+        # ── NEW: UE destination folder ──
+        root.addLayout(
+            self._field_row(
+                "UE5 ASSET DESTINATION",
+                "le_ue_destination",
+                placeholder="/Game/Environments/ModularKit",
+                default="/Game",
+                browse_slot=self._browse_ue_destination,  # <-- Map the slot here
+            )
+        )
         root.addSpacing(18)
 
         root.addWidget(self._divider())
         root.addSpacing(14)
 
-        # ── Options ──
-        self.cb_first_import = QCheckBox("First import  —  include USD materials")
-        self.cb_first_import.setChecked(False)
-        self.cb_first_import.setToolTip(
-            "Check this only on the very first import.\n"
-            "Subsequent imports keep your UE material assignments intact."
+        # ── NEW: Center meshes checkbox ──
+        self.cb_centered = QCheckBox("Center meshes  —  move pivot to world origin")
+        self.cb_centered.setChecked(False)
+        self.cb_centered.setToolTip(
+            "Moves each mesh's pivot to the world origin before export.\n"
+            "Useful for modular kit pieces that need a consistent pivot."
         )
-        root.addWidget(self.cb_first_import)
+        root.addWidget(self.cb_centered)
         root.addSpacing(18)
 
         # ── Publish button ──
@@ -481,6 +493,36 @@ class EnvironmentExporterUI(QDialog):
         if path:
             self.le_project.setText(path)
 
+    def _browse_ue_destination(self):
+        # Look for the selected Unreal Project to default the browser to its Content folder
+        project_path = self.le_project.text().strip()
+        start_dir = str(Path.home())
+
+        if project_path and Path(project_path).exists():
+            content_dir = Path(project_path).parent / "Content"
+            if content_dir.exists():
+                start_dir = str(content_dir)
+
+        folder = QFileDialog.getExistingDirectory(
+            self, "Select UE5 Destination (Inside Content Folder)", start_dir
+        )
+
+        if folder:
+            folder_path = Path(folder)
+            # Parse the physical folder path and translate it into a virtual /Game/ path
+            if "Content" in folder_path.parts:
+                idx = folder_path.parts.index("Content")
+                sub_parts = folder_path.parts[idx + 1 :]
+                ue_path = "/Game/" + "/".join(sub_parts) if sub_parts else "/Game"
+                self.le_ue_destination.setText(ue_path)
+            else:
+                QMessageBox.warning(
+                    self,
+                    "Path Warning",
+                    "The folder you selected is not inside a 'Content' directory.\n\nThe absolute path has been inserted, but this will likely fail during the Unreal Engine import.",
+                )
+                self.le_ue_destination.setText(str(folder_path).replace("\\", "/"))
+
     # ── Publish ───────────────────────────────────────────────────────────────
 
     def _on_publish(self):
@@ -506,6 +548,8 @@ class EnvironmentExporterUI(QDialog):
         export_folder = self.le_export.text().strip()
         filename = self.le_filename.text().strip() or FILENAME
         project = self.le_project.text().strip() or TEMP_PRO_PATH
+        ue_destination = self.le_ue_destination.text().strip() or "/Game"  # NEW
+        centered = self.cb_centered.isChecked()  # NEW
 
         if not export_folder:
             QMessageBox.warning(self, "Missing Field", "Please set an Export Folder.")
@@ -534,6 +578,8 @@ class EnvironmentExporterUI(QDialog):
                 target_folder=export_folder,
                 filename=filename,
                 project_path=project,
+                centered=centered,  # NEW: wired through
+                ue_destination=ue_destination,  # NEW: wired through
             )
             if result:
                 self.btn_publish.setText("✓  PUBLISHED")

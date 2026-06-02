@@ -9,7 +9,9 @@ logger = logging.getLogger("EnvironmentExporter")
 
 class UnrealBridge:
     @staticmethod
-    def launch_unreal(editor_path, project_path, usd_path, script_directory):
+    def launch_unreal(
+        editor_path, project_path, usd_path, script_directory, ue_destination="/Game"
+    ):
         """
         Description:
         Launches Unreal Engine 5 and triggers the custom USD importer script.
@@ -18,18 +20,15 @@ class UnrealBridge:
         project_path(str): UE5 project location.
         usd_path(str): Path to the modular kit from maya.
         script_directory(str): Path to the python script locations.
-
+        ue_destination(str): Content Browser destination folder inside UE5.
         Output:
         True/False(bool): Success if the launch in unreal worked.
-
         """
         try:
-            # Sets the paths as agnostic objects using PATH.
             editor = Path(editor_path)
             project = Path(project_path)
             usd_file = Path(usd_path)
 
-            # Checks The project and UE5 are installed.
             if not editor.exists() or not project.exists():
                 logger.error("Editor or Project path is invalid.")
                 return False
@@ -38,29 +37,26 @@ class UnrealBridge:
             safe_usd_file = str(usd_file).replace("\\", "/")
             safe_script_dir = str(script_directory).replace("\\", "/")
 
-            # Creates a temp fodler for the python script to live in.
             python_dir = project.parent / "Content" / "Python"
             python_dir.mkdir(parents=True, exist_ok=True)
 
-            # It sets the temp path for the init python script to execute in Unreal.
             startup_script_path = python_dir / "init_unreal.py"
             safe_startup_path = str(startup_script_path).replace("\\", "/")
+
             # IMPORTANT: Do not add spaces/tabs before these lines!
             ue_python_code = f"""import sys
 import os
 sys.path.append("{safe_script_dir}")
 import usd_importer_ue5
-usd_importer_ue5.import_usd_modular_kit("{safe_usd_file}", "/Game")
+usd_importer_ue5.import_usd_modular_kit("{safe_usd_file}", "{ue_destination}")
 os.remove("{safe_startup_path}")
 """
 
-            # It initialzied the python scripts and writes the script.
             with open(startup_script_path, "w") as f:
                 f.write(ue_python_code)
 
             logger.info("Launching Unreal Engine 5... This may take a moment.")
 
-            # Makes a list of the commands to subproccess to execute.
             cmd = [
                 str(editor),
                 str(project),
@@ -68,7 +64,6 @@ os.remove("{safe_startup_path}")
                 "-stdout",
             ]
 
-            # Executes Subprocess.
             proc = subprocess.Popen(cmd)
             logger.info(f"UE5 launched with PID {proc.pid}")
             return True
@@ -84,10 +79,8 @@ os.remove("{safe_startup_path}")
         Reads the Epic Games Launcher manifest to find the latest UE5 executable.
         Returns the string path to UnrealEditor.exe, or None if not found.
         """
-        # The standard location for Epic's installation manifest on Windows
         program_data = os.environ.get("PROGRAMDATA", "C:\\ProgramData")
 
-        # Makes a full path to the .dat file for unreal.
         manifest_path = (
             Path(program_data)
             / "Epic"
@@ -95,7 +88,6 @@ os.remove("{safe_startup_path}")
             / "LauncherInstalled.dat"
         )
 
-        #  Checks there is a manifest or .dat file in the system.
         if not manifest_path.exists():
             logger.error(
                 "Epic Games manifest not found. Is UE installed via the Launcher?"
@@ -106,12 +98,10 @@ os.remove("{safe_startup_path}")
             with open(manifest_path, "r") as file:
                 data = json.load(file)
 
-            # Dictionary to store { "UE_5.3": "C:/Path/To/Engine" }
             ue_installs = {}
 
             for item in data.get("InstallationList", []):
                 app_name = item.get("AppName", "")
-                # We only want Unreal Engine 5.x
                 if app_name.startswith("UE_5"):
                     ue_installs[app_name] = item.get("InstallLocation")
 
@@ -121,11 +111,9 @@ os.remove("{safe_startup_path}")
                 )
                 return None
 
-            # Sort the versions (e.g., UE_5.4 > UE_5.3) and grab the newest one
             latest_version = sorted(ue_installs.keys(), reverse=True)[0]
             latest_install_path = Path(ue_installs[latest_version])
 
-            # Construct the path to the executable
             editor_exe = (
                 latest_install_path
                 / "Engine"

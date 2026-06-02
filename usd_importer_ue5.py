@@ -175,7 +175,9 @@ class UE5Importer:
             asset_tools.import_asset_tasks([task])
 
             # Makes a list of the imported objects from USD.
-            imported = task.imported_object_paths
+            # BUG FIX: imported_object_paths returns an Unreal Array, not a Python list.
+            # json.dump can't serialize it — cast to list first.
+            imported = list(task.imported_object_paths)
             if imported:
                 self._log(f"SUCCESS: {len(imported)} asset(s) imported:")
                 for p in imported:
