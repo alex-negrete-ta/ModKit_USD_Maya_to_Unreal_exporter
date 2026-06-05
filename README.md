@@ -55,7 +55,7 @@ Click to see the Demo:
 * Create a new **Python** tab and paste the following execution code:
 
   ```python
-  import enviroment_exporter
+  import environment_exporter
   environment_exporter.launch()
 
 # Quick Start:
