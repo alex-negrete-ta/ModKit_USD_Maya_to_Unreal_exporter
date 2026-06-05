@@ -12,6 +12,9 @@ Click to see the Demo:
 * Exports the selection in a single USD file for optimized for automated import.
 * Directory selection for Unreal, USD file destination folder, and Output folder.
 * Write metadata on artist, time and dump into a JSON sidecar file.
+
+# Why USD?
+USD is the new industry standard for pipeline and asset transfering. While I am still learning the subject of USD, and enviroment art for game art, I realized exportig FBX files for every single piece of a modular scene is a waste of time. I developed this tool so that insted exporting all assets in a single USD file could be handle easier, and faster for this single case sceneario of modular kits.
   
 # How to install:
 
@@ -39,12 +42,12 @@ Click to see the Demo:
 
 ### Method 2: Command line installation.
 
-***1. Download the Package**
+**1. Download the Package**
 * Open your terminal and write
   ```
   git clone [https://github.com/alex-negrete-ta/ModKit_USD_Maya_to_Unreal_exporter.git](https://github.com/alex-negrete-ta/ModKit_USD_Maya_to_Unreal_exporter.git)
 
-***2. Install the package into Maya**
+**2. Install the package into Maya**
 * Navigate to the root folder of the tool in your terminal and execute>
   ```
   "C:\Program Files\Autodesk\Maya<version>\bin\mayapy.exe" -m pip install .
@@ -57,6 +60,14 @@ Click to see the Demo:
   ```python
   import environment_exporter
   environment_exporter.launch()
+
+# Requirements:
+### Maya:
+* Maya 2022+
+
+### Unreal
+* USD importer
+* Python Editor Script Plugin
 
 # Quick Start:
 ### First time setup.
@@ -74,22 +85,17 @@ It will automatically open your project and import the meshes if the right plug 
 # Current Limitations:
 * It does not export a live link between the projects.
 * It opens a new instance of Unreal Engine.
+* Single USD file only (not layered).
+* Tested on Windows only
   
 # File Reference:
 ### Maya Scripts:
 * <u>enviromentexporter_ui.py</u> It navigates the Pyside logic and UI.
 * <u>maya_unreal_enviroments.py</u> It handles the Meshes logic export logic.
 * <u>logger.py</u> It handles the logging input into the UI.
-* <u>unreal_laoder.py</u> Handles the finding of UE5 in your system and the subproccess logic.
+* <u>unreal_loader.py</u> Handles the finding of UE5 in your system and the subproccess logic.
 * <u>usd_importer_ue5.py</u> Handles the import of the USD assets inside Unreal.
 * <u>Constants.py</u> It handles the constants in the tool such as version number and title.
 
-# Requirements:
-### Maya:
-* Maya 2022+
-
-### Unreal
-* USD importer
-* Python Editor Script Plugin
 
 
