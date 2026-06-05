@@ -5,7 +5,8 @@ This tool, will grab your maya modular kits selection and automatically export a
 ![Descriptive Alt Text](docs/UI_screenshot.png)
 
 # Demo Videos:
-[![Watch the video](https://vimeo.com/1198864885?share=copy&fl=sv&fe=ci)](https://vimeo.com/1198864885?share=copy&fl=sv&fe=ci)
+[![Watch the project demo](docs/UI_screenshot.png)](https://vimeo.com)
+
 # Current Features (V.1.0.0):
 # How to install:
 # Quick Start:
