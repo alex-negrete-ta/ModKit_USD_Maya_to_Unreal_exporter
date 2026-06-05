@@ -8,7 +8,7 @@ Click to see the Demo:
 [![Watch the project demo](docs/UI_screenshot.png)](https://vimeo.com/1198864885?share=copy&fl=sv&fe=ci)
 
 # Current Features (V.1.0.0):
-## Modular Kit Exporter from Maya
+### Modular Kit Exporter from Maya
 * Exports the selection in a single USD file for optimized for automated import.
 * Directory selection for Unreal, USD file destination folder, and Output folder.
 * Write metadata on artist, time and dump into a JSON sidecar file.
@@ -59,10 +59,10 @@ Click to see the Demo:
   environment_exporter.launch()
 
 # Quick Start:
-## First time setup.
+### First time setup.
 Make sure that you have the right plugins enabled in Unreal Engine and that the Maya you are working is newer than Maya 2022+
 
-## Basic Workflow.
+### Basic Workflow.
 * After you have your modular kit, select all the meshes you want to export and open the software.
 * First select the folder where you want the USD and json file to be exported into.
 * Write the name of the USD file you would like.
@@ -76,7 +76,7 @@ It will automatically open your project and import the meshes if the right plug 
 * It opens a new instance of Unreal Engine.
   
 # File Reference:
-## Maya Scripts:
+### Maya Scripts:
 * <u>enviromentexporter_ui.py</u> It navigates the Pyside logic and UI.
 * <u>maya_unreal_enviroments.py</u> It handles the Meshes logic export logic.
 * <u>logger.py</u> It handles the logging input into the UI.
@@ -85,10 +85,10 @@ It will automatically open your project and import the meshes if the right plug 
 * <u>Constants.py</u> It handles the constants in the tool such as version number and title.
 
 # Requirements:
-## Maya:
+### Maya:
 * Maya 2022+
 
-## Unreal
+### Unreal
 * USD importer
 * Python Editor Script Plugin
 
