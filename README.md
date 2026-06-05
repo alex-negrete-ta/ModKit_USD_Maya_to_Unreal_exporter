@@ -14,8 +14,6 @@ Click to see the Demo:
 * Write metadata on artist, time and dump into a JSON sidecar file.
   
 # How to install:
-## Download and install:
-## How to install:
 
 ### Method 1: Standard Installation (Recommended for Artists)
 
@@ -61,12 +59,32 @@ Click to see the Demo:
   environment_exporter.launch()
 
 # Quick Start:
-# File Structure:
-# Current Limitations:
-# File Reference:
-# Development Timeline:
-# Requirements:
+## First time setup.
+Make sure that you have the right plugins enabled in Unreal Engine and that the Maya you are working is newer than Maya 2022+
 
+## Basic Workflow.
+* After you have your modular kit, select all the meshes you want to export and open the software.
+* First select the folder where you want the USD and json file to be exported into.
+* Write the name of the USD file you would like.
+* Select the .uproject file you want to import your modular kit into.
+* And select the folder inside your unreal project where you want to import your modular kit.
+
+It will automatically open your project and import the meshes if the right plug ins are enabled.
+
+# Current Limitations:
+* It does not export a live link between the projects.
+* It opens a new instance of Unreal Engine.
+  
+# File Reference:
+## Maya Scripts:
+* <u>enviromentexporter_ui.py</u> It navigates the Pyside logic and UI.
+* <u>maya_unreal_enviroments.py</u> It handles the Meshes logic export logic.
+* <u>logger.py</u> It handles the logging input into the UI.
+* <u>unreal_laoder.py</u> Handles the finding of UE5 in your system and the subproccess logic.
+* <u>usd_importer_ue5.py</u> Handles the import of the USD assets inside Unreal.
+* <u>Constants.py</u> It handles the constants in the tool such as version number and title.
+
+# Requirements:
 ## Maya:
 * Maya 2022+
 
